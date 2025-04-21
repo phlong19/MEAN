@@ -1,6 +1,18 @@
-<form action="" method="post">
+<!-- <form action="" method="post">
   <label for="email">email</label>
   <input type="email" name="email" id="email" required />
 
-  <button type="submit">create post</button>
-</form>
+  <button type="button" (click)="onAddPost()">create post</button>
+</form> -->
+
+<textarea
+  name="content"
+  [value]="content"
+  id="content"
+  rows="6"
+  placeholder="content here"
+></textarea>
+
+<button type="button" (click)="onAddPost()">create post</button>
+
+<p>{{ content }}</p>
