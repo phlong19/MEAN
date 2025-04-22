@@ -1,18 +1,16 @@
-<!-- <form action="" method="post">
-  <label for="email">email</label>
-  <input type="email" name="email" id="email" required />
+<mat-card>
+  <mat-form-field>
+    <mat-label>Title</mat-label>
+    <textarea
+      matInput
+      required
+      [(ngModel)]="enteredValue"
+      placeholder="Enter title"
+      required
+    ></textarea>
+  </mat-form-field>
+</mat-card>
 
-  <button type="button" (click)="onAddPost()">create post</button>
-</form> -->
-
-<textarea
-  name="content"
-  [value]="content"
-  id="content"
-  rows="6"
-  placeholder="content here"
-></textarea>
-
-<button type="button" (click)="onAddPost()">create post</button>
+<button mat-fab type="button" (click)="onCreatePost()">create post</button>
 
 <p>{{ content }}</p>
