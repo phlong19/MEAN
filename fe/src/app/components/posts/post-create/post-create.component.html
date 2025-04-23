@@ -11,6 +11,13 @@
   </mat-form-field>
 </mat-card>
 
-<button mat-fab type="button" (click)="onCreatePost()">create post</button>
+<button
+  mat-raised-button
+  color="primary"
+  type="button"
+  (click)="onCreatePost()"
+>
+  create post
+</button>
 
 <p>{{ content }}</p>
