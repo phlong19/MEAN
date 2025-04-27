@@ -1,9 +1,10 @@
-<mat-accordion>
-  <mat-expansion-panel>
+<div class="no-posts" *ngIf="!posts.length">No posts found.</div>
+<mat-accordion *ngIf="posts.length">
+  <mat-expansion-panel *ngFor="let post of posts">
     <mat-expansion-panel-header>
-      <mat-panel-title> Posts </mat-panel-title>
-      <mat-panel-description> List of all posts </mat-panel-description>
+      <mat-panel-title> {{ post.title }} </mat-panel-title>
+      <mat-panel-description> des </mat-panel-description>
     </mat-expansion-panel-header>
-    <p>content here</p>
+    <p>{{ post.content }}</p>
   </mat-expansion-panel>
 </mat-accordion>
