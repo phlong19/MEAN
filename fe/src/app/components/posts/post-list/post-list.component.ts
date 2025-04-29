@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 
-interface Post {
+export interface Post {
   title: string;
   content: string;
 }
@@ -13,5 +13,5 @@ interface Post {
   styleUrl: './post-list.component.scss',
 })
 export class PostListComponent {
-  posts: Post[] = [];
+  @Input() posts: Post[] = [];
 }

@@ -1,21 +1,20 @@
 <mat-card>
-  <mat-form-field>
+  <mat-form-field appearance="fill">
     <mat-label>Title</mat-label>
+    <input matInput [(ngModel)]="title" placeholder="Your title" required />
+  </mat-form-field>
+  <mat-form-field class="content-input">
+    <mat-label>Content</mat-label>
     <textarea
       matInput
-      required
-      [(ngModel)]="enteredValue"
-      placeholder="Enter title"
+      [(ngModel)]="content"
+      placeholder="Write your content here..."
       required
     ></textarea>
   </mat-form-field>
+  <p class="error-message">{{ errorMessage }}</p>
 </mat-card>
 
-<button
-  mat-raised-button
-  color="primary"
-  type="button"
-  (click)="onCreatePost()"
->
+<button mat-raised-button color="primary" type="button" (click)="onAddPost()">
   create post
 </button>
