@@ -3,8 +3,18 @@
   <mat-expansion-panel *ngFor="let post of posts">
     <mat-expansion-panel-header>
       <mat-panel-title> {{ post.title }} </mat-panel-title>
-      <mat-panel-description> des </mat-panel-description>
     </mat-expansion-panel-header>
     <p>{{ post.content }}</p>
+
+    <mat-action-row>
+      <button type="button" extended mat-button color="primary">
+        <mat-icon>edit_note</mat-icon>
+        Edit
+      </button>
+      <button type="button" mat-button extended color="warn">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
+    </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
