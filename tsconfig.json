@@ -17,7 +17,9 @@
     "moduleResolution": "bundler",
     "importHelpers": true,
     "target": "ES2022",
-    "module": "ES2022"
+    "module": "ES2022",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

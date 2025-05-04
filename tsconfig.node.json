@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "commonjs", // Required for Node.js
+    "target": "ES2022",
+    "outDir": "./dist",   // Output directory for compiled code (if using emit)
+    "rootDir": "./src",   // Source directory for your server code
+    "esModuleInterop": true,
+    "strict": true,       // Enabling strict mode for Node.js as well
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",               // Avoid compiling the dist folder
+    "src/**/*.spec.ts"    // Avoid specs if they are in the same repo
+  ]
+}
