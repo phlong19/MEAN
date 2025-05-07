@@ -11,6 +11,8 @@ app.get('/posts', (req, res, next) => {
     },
     { content: 'Other content for testing display.', title: 'Random title!' },
   ];
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.status(200).json({
     code: 200,
     message: 'Fetched posts successfully!',
