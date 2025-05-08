@@ -24,7 +24,14 @@ export class PostService {
   }
 
   addPost(post: Post) {
-    this.posts.push(post);
-    this.postUpdated.next([...this.posts]);
+    this.http
+      .post<{ message: string; post: Post }>(
+        'http://localhost:3000/create-post',
+        post
+      )
+      .subscribe((res) => {
+        this.posts.push(post);
+        this.postUpdated.next([...this.posts]);
+      });
   }
 }
