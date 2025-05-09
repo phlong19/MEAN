@@ -1,8 +1,15 @@
 import express from 'express';
-import { Post } from '../app/post.model';
 import bodyParser from 'body-parser';
+import Post from './models/post';
+import mongoose from 'mongoose';
 
+process.loadEnvFile();
 const app = express();
+
+mongoose
+  .connect(process.env?.['URI'] ?? '')
+  .then(() => console.log('Connected to DB'))
+  .catch((e) => console.error(e));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -16,20 +23,19 @@ app.use((req, res, next) => {
 
 app.post('/create-post', (req, res, next) => {
   // validate req.body
-
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content,
+  });
+  post.save();
   res.status(201).json({
     message: 'Post created successfully',
   });
 });
 
-app.get('/posts', (req, res, next) => {
-  const posts: Post[] = [
-    {
-      content: 'instagram chat call in 56 minutes.',
-      title: 'some random measurement.',
-    },
-    { content: 'Other content for testing display.', title: 'Random title!' },
-  ];
+app.get('/posts', async (req, res, next) => {
+  // const post:typeof Post[] = new Post()
+  const posts = await Post.find();
 
   res.status(200).json({
     code: 200,
