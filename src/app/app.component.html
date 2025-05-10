@@ -1,5 +1,24 @@
-<app-header></app-header>
-<main>
-  <app-post-create></app-post-create>
-  <app-post-list></app-post-list>
-</main>
+<mat-drawer-container class="drawer-container">
+  <mat-drawer #drawer mode="over">
+    <div class="inner-content-wrapper">
+      <div class="inner-content-header">
+        <h2></h2>
+        <button mat-icon-button type="button" (click)="drawer.close()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <ul class="navigation-list">
+        <li *ngFor="let route of routes">
+          <a href="/{{ route.href }}">{{ route.label }}</a>
+        </li>
+      </ul>
+    </div>
+  </mat-drawer>
+
+  <mat-drawer-content>
+    <app-header (toggleDrawer)="drawer.toggle()"></app-header>
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+  </mat-drawer-content>
+</mat-drawer-container>

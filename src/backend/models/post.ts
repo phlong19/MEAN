@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose';
-import { Post as PostSchema } from '../../app/post.model';
+import { Post as PostSchema } from '../../app/app.model';
+import { Models } from '../constant/constant';
 
 const postSchema = new Schema<PostSchema>({
   title: {
@@ -12,5 +13,5 @@ const postSchema = new Schema<PostSchema>({
   },
 });
 
-const Post = model('post', postSchema, 'post');
+const Post = model(Models.Post.name, postSchema, Models.Post.collection);
 export default Post;

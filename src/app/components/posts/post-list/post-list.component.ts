@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { Post } from '../../../post.model';
+import { Post } from '../../../app.model';
 import { PostService } from '../../../post.service';
 import { Subscription } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,6 +26,10 @@ export class PostListComponent implements OnInit, OnDestroy {
       .subscribe((posts) => {
         this.posts = posts;
       });
+  }
+
+  onDelete(postId: Post['id']) {
+    this.postService.deletePost(postId);
   }
 
   ngOnDestroy(): void {
