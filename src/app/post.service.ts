@@ -31,6 +31,14 @@ export class PostService {
       });
   }
 
+  getPostById(id: string): Post {
+    // return old data from list posts first
+    // then append a loading then paste new data
+    return { ...this.posts.find((i) => i.id === id) };
+
+    // return this.http.get(`${this.api}/${id}`)
+  }
+
   getPostUpdateListener() {
     return this.postUpdated.asObservable();
   }

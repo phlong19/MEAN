@@ -9,7 +9,9 @@
       </div>
       <ul class="navigation-list">
         <li *ngFor="let route of routes">
-          <a href="/{{ route.href }}">{{ route.label }}</a>
+          <a routerLink="/{{ route.href }}" (click)="drawer.close()">{{
+            route.label
+          }}</a>
         </li>
       </ul>
     </div>

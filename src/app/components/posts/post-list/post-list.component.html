@@ -7,10 +7,17 @@
     <p>{{ post.content }}</p>
 
     <mat-action-row>
-      <button type="button" extended mat-button color="primary">
+      <a
+        [routerLink]="['/edit/', post.id]"
+        type="button"
+        routelink
+        extended
+        mat-button
+        color="primary"
+      >
         <mat-icon>edit_note</mat-icon>
         Edit
-      </button>
+      </a>
       <button
         (click)="onDelete(post.id)"
         type="button"

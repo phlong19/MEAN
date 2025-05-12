@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
   selector: 'app-root',
   imports: [
     RouterOutlet,
+    RouterLink,
     HeaderComponent,
     MatSidenavModule,
     MatButtonModule,

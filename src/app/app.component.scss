@@ -27,12 +27,21 @@ main {
     .navigation-list {
       list-style-type: none;
 
+      & > * + * {
+        margin-top: 12px;
+      }
+
       a {
         text-transform: capitalize;
         text-decoration: none;
         font-size: 16px;
         line-height: 24px;
         font-weight: 500;
+        transition: color 200ms ease;
+
+        &:hover {
+          color: #ff4090;
+        }
       }
     }
   }

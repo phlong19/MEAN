@@ -4,7 +4,7 @@
       <mat-label>Title</mat-label>
       <input
         matInput
-        ngModel
+        [ngModel]="post.title"
         name="title"
         required
         minlength="2"
@@ -18,7 +18,7 @@
       <mat-label>Content</mat-label>
       <textarea
         matInput
-        ngModel
+        [ngModel]="post.content"
         name="content"
         placeholder="Write your content here..."
         required
