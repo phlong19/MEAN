@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
@@ -22,7 +22,8 @@ import { Post } from '../../../app.model';
 })
 export class PostCreateComponent implements OnInit {
   post: Post;
-  private mode: 'create' | 'edit' = 'create';
+  mode: 'create' | 'edit' = 'create';
+  isLoading = false;
   private postId: string;
 
   constructor(public postService: PostService, public route: ActivatedRoute) {}
@@ -30,9 +31,13 @@ export class PostCreateComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('id')) {
+        this.isLoading = true;
         this.mode = 'edit';
         this.postId = paramMap.get('id')!;
-        this.post = this.postService.getPostById(this.postId);
+        this.postService.getPostById(this.postId).subscribe((res) => {
+          this.post = { ...res.post!, id: res.post?._id };
+          this.isLoading = false;
+        });
       } else {
         this.mode = 'create';
         this.postId = '';
@@ -43,14 +48,16 @@ export class PostCreateComponent implements OnInit {
   onAddPost(form: NgForm) {
     if (form.invalid) {
       return;
+    } else if (this.postId) {
+      this.postService.updatePost(this.postId, { ...form.value });
     } else {
       this.postService.addPost({
         title: form.value.title,
         content: form.value.content,
       });
-
-      // clear inputs
-      form.resetForm();
     }
+
+    // clear inputs
+    form.resetForm();
   }
 }

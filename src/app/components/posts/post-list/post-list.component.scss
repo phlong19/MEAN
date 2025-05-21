@@ -1,3 +1,8 @@
+.title {
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
 .no-posts {
   padding: 64px;
   font-weight: 600;
@@ -8,4 +13,12 @@
 .mat-accordion {
   display: block;
   margin-top: 16px;
+}
+
+.spinner-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
 }

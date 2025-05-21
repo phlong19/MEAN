@@ -25,18 +25,15 @@ export class PostService {
         )
       )
       .subscribe((res) => {
-        console.log(res);
         this.posts = res;
         this.postUpdated.next([...this.posts]);
       });
   }
 
-  getPostById(id: string): Post {
-    // return old data from list posts first
-    // then append a loading then paste new data
-    return { ...this.posts.find((i) => i.id === id) };
-
-    // return this.http.get(`${this.api}/${id}`)
+  getPostById(id: string) {
+    return this.http.get<{ code: number; post?: Post; message: string }>(
+      `${this.api}/post/${id}`
+    );
   }
 
   getPostUpdateListener() {
@@ -48,6 +45,24 @@ export class PostService {
       .post<{ message: string; post: Post }>(`${this.api}/create-post`, post)
       .subscribe((res) => {
         this.posts.push(res.post);
+        this.postUpdated.next([...this.posts]);
+      });
+  }
+
+  updatePost(postId: Post['id'], post: Post) {
+    this.http
+      .patch<{ message: string; post: Post }>(
+        `${this.api}/post/${postId}`,
+        post
+      )
+      .subscribe((res) => {
+        const updatedPosts = [...this.posts];
+        const index = updatedPosts.findIndex((i) => i.id === postId);
+
+        if (index !== -1) {
+          updatedPosts[index] = { ...res.post };
+        }
+        this.posts = updatedPosts;
         this.postUpdated.next([...this.posts]);
       });
   }

@@ -1,10 +1,16 @@
 <mat-card>
-  <form class="postForm" (submit)="onAddPost(postForm)" #postForm="ngForm">
+  <div *ngIf="isLoading" class="custom-loading"></div>
+  <form
+    [inert]="isLoading"
+    class="postForm"
+    (submit)="onAddPost(postForm)"
+    #postForm="ngForm"
+  >
     <mat-form-field appearance="fill">
       <mat-label>Title</mat-label>
       <input
         matInput
-        [ngModel]="post.title"
+        [ngModel]="post ? post.title : ''"
         name="title"
         required
         minlength="2"
@@ -18,7 +24,7 @@
       <mat-label>Content</mat-label>
       <textarea
         matInput
-        [ngModel]="post.content"
+        [ngModel]="post ? post.content : ''"
         name="content"
         placeholder="Write your content here..."
         required
@@ -29,6 +35,8 @@
       >
     </mat-form-field>
 
-    <button mat-raised-button color="primary" type="submit">create post</button>
+    <button mat-raised-button color="primary" type="submit">
+      {{ mode }} post
+    </button>
   </form>
 </mat-card>

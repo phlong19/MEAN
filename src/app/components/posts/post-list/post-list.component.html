@@ -1,4 +1,8 @@
-<div class="no-posts" *ngIf="!posts.length">No posts found.</div>
+<h1 class="title">Lists Post</h1>
+<div class="spinner-wrapper" *ngIf="isLoading">
+  <mat-spinner diameter="60"></mat-spinner>
+</div>
+<div class="no-posts" *ngIf="!posts.length && !isLoading">No posts found.</div>
 <mat-accordion *ngIf="posts.length">
   <mat-expansion-panel *ngFor="let post of posts">
     <mat-expansion-panel-header>
@@ -10,7 +14,6 @@
       <a
         [routerLink]="['/edit/', post.id]"
         type="button"
-        routelink
         extended
         mat-button
         color="primary"

@@ -1,5 +1,30 @@
 mat-card {
   padding: 10px;
+  position: relative;
+}
+
+.custom-loading {
+  z-index: 2;
+  position: absolute;
+  inset: 0;
+  opacity: 0.8; /* Increased for better visual shine */
+  background: linear-gradient(
+    135deg,
+    lightgray 25%,
+    #ffffff 50%,
+    lightgray 75%
+  );
+  background-size: 200% 200%;
+  animation: shine 2s linear infinite;
+}
+
+@keyframes shine {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
 }
 
 .content-input {
@@ -10,4 +35,8 @@ mat-card {
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  button {
+    text-transform: capitalize;
+  }
 }

@@ -54,6 +54,39 @@ app.get('/posts', async (req, res, next) => {
   next();
 });
 
+app.get('/post/:id', async (req, res, next) => {
+  const { id } = req.params;
+
+  const post = await Post.findById(id);
+
+  if (post) {
+    res.status(200).json({
+      post,
+      message: 'Fetch post by Id successfully',
+    });
+  } else {
+    res.status(400).json({
+      message: 'Post not found',
+    });
+  }
+});
+
+app.patch('/post/:id', async (req, res, next) => {
+  const { id } = req.params;
+
+  const updatedPost = new Post({ ...req.body, _id: id });
+
+  const post = await Post.updateOne({ _id: id }, updatedPost, {
+    returnDocument: 'after',
+  });
+
+  res.status(201).json({
+    code: 201,
+    message: 'Updated post successfully!',
+    post,
+  });
+});
+
 app.delete('/post/:id', async (req, res, next) => {
   // check if post exist, get name pop in the message if yes, throw an error if can't find any
   const post = await Post.findById(req.params.id);
