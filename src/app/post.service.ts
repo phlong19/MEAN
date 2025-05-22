@@ -2,14 +2,15 @@ import { Injectable } from '@angular/core';
 import { Post } from './app.model';
 import { map, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class PostService {
   private api = 'http://localhost:3000';
   private posts: Post[] = [];
-  private postUpdated = new Subject<Post[]>();
+  postUpdated = new Subject<Post[]>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   getPost() {
     this.http

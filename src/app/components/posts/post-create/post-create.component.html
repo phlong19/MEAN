@@ -2,38 +2,41 @@
   <div *ngIf="isLoading" class="custom-loading"></div>
   <form
     [inert]="isLoading"
+    [formGroup]="form"
     class="postForm"
-    (submit)="onAddPost(postForm)"
-    #postForm="ngForm"
+    (submit)="onAddPost()"
   >
     <mat-form-field appearance="fill">
       <mat-label>Title</mat-label>
       <input
         matInput
-        [ngModel]="post ? post.title : ''"
-        name="title"
-        required
-        minlength="2"
-        placeholder="Your title"
-        required
-        #title="ngModel"
+        type="text"
+        formControlName="title"
+        placeholder="Post Title"
       />
-      <mat-error *ngIf="title.invalid">Missing post title</mat-error>
+      <mat-error *ngIf="form.get('title')?.invalid"
+        >Missing post title</mat-error
+      >
     </mat-form-field>
     <mat-form-field class="content-input">
       <mat-label>Content</mat-label>
       <textarea
         matInput
-        [ngModel]="post ? post.content : ''"
-        name="content"
-        placeholder="Write your content here..."
-        required
-        #content="ngModel"
+        rows="4"
+        formControlName="content"
+        placeholder="Post Content"
       ></textarea>
-      <mat-error *ngIf="content.invalid"
-        >Please enter a post content.</mat-error
+      <mat-error *ngIf="form.get('content')?.invalid"
+        >Please enter a post title.</mat-error
       >
     </mat-form-field>
+
+    <div class="file-picker-wrapper">
+      <button mat-stroked-button (click)="filePicker.click()" type="button">
+        Upload media
+      </button>
+      <input type="file" hidden #filePicker />
+    </div>
 
     <button mat-raised-button color="primary" type="submit">
       {{ mode }} post
