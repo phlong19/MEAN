@@ -41,6 +41,51 @@ mat-card {
   }
 }
 
+.asterisk {
+  color: red;
+}
+
+mat-error {
+  font-weight: 500;
+  margin-top: 3px;
+}
+
 .file-picker-wrapper {
   margin-bottom: 20px;
+
+  .error-message-file {
+    margin-top: 20px;
+    padding-left: 5px;
+  }
+}
+
+.image-preview {
+  max-width: 250px;
+  height: 150px;
+  padding: 10px;
+  margin-top: 15px;
+  border-radius: 10px;
+  position: relative;
+  border: 2px solid var(--mat-badge-background-color);
+
+  img {
+    object-fit: contain;
+    height: -webkit-fill-available;
+    width: -webkit-fill-available;
+    inset: 0;
+    position: absolute;
+  }
+
+  .main-image {
+    padding: inherit;
+    z-index: 2;
+    margin: 0 auto;
+  }
+
+  .preview-layer {
+    position: static;
+    z-index: 1;
+    object-fit: fill;
+    filter: blur(8px);
+  }
 }

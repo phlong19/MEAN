@@ -33,9 +33,25 @@
 
     <div class="file-picker-wrapper">
       <button mat-stroked-button (click)="filePicker.click()" type="button">
-        Upload media
+        Upload media <span class="asterisk">*</span>
       </button>
-      <input type="file" hidden #filePicker />
+      <input type="file" hidden #filePicker (change)="onFileChange($event)" />
+      <mat-card
+        *ngIf="link && form.get('image')?.valid"
+        class="image-preview"
+        appearance="outlined"
+      >
+        <img
+          mat-card-image
+          class="main-image"
+          [src]="link"
+          alt="preview uploaded image"
+        />
+        <img class="preview-layer" [src]="link" alt="image preview layer" />
+      </mat-card>
+      <mat-error class="error-message-file" *ngIf="showUploadError"
+        >Please attach JPEG / JPG / PNG image file only!</mat-error
+      >
     </div>
 
     <button mat-raised-button color="primary" type="submit">

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { PostService } from '../../../post.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Post } from '../../../app.model';
+import { mimeType } from './mime-type.validator';
 
 @Component({
   selector: 'app-post-create',
@@ -27,11 +28,13 @@ import { Post } from '../../../app.model';
   templateUrl: './post-create.component.html',
   styleUrl: './post-create.component.scss',
 })
-export class PostCreateComponent implements OnInit {
+export class PostCreateComponent implements OnInit, OnDestroy {
   post: Post;
   mode: 'create' | 'edit' = 'create';
   isLoading = false;
   form: FormGroup;
+  link: string;
+  showUploadError = false;
   private postId: string;
 
   constructor(
@@ -49,6 +52,10 @@ export class PostCreateComponent implements OnInit {
       content: new FormControl(null, {
         validators: [Validators.required],
       }),
+      image: new FormControl(null, {
+        validators: [Validators.required],
+        asyncValidators: [mimeType],
+      }),
     });
 
     // check id in params to fetch data for edit
@@ -61,6 +68,7 @@ export class PostCreateComponent implements OnInit {
           this.post = { ...res.post!, id: res.post?._id };
           this.isLoading = false;
           this.form.setValue({
+            image: null,
             title: this.post.title,
             content: this.post.content,
           });
@@ -81,6 +89,10 @@ export class PostCreateComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    return URL.revokeObjectURL(this.link);
+  }
+
   onAddPost() {
     if (this.form.invalid) {
       return;
@@ -93,6 +105,27 @@ export class PostCreateComponent implements OnInit {
         title: this.form.value.title,
         content: this.form.value.content,
       });
+    }
+  }
+
+  onFileChange(event: Event) {
+    this.showUploadError = false;
+    const file = (event.target as HTMLInputElement).files?.[0];
+
+    if (file) {
+      this.form.patchValue({ image: file });
+      this.form.get('image')?.updateValueAndValidity();
+      this.form.get('image')?.statusChanges.subscribe((status) => {
+        if (status === 'INVALID') {
+          this.showUploadError = true;
+        }
+      });
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.link = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 }
