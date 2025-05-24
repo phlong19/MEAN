@@ -95,16 +95,23 @@ export class PostCreateComponent implements OnInit, OnDestroy {
 
   onAddPost() {
     if (this.form.invalid) {
+      if (!this.form.value.image) {
+        this.showUploadError = true;
+      }
+
       return;
     }
     this.isLoading = true;
     if (this.postId) {
       this.postService.updatePost(this.postId, { ...this.form.value });
     } else {
-      this.postService.addPost({
-        title: this.form.value.title,
-        content: this.form.value.content,
-      });
+      this.postService.addPost(
+        {
+          title: this.form.value.title,
+          content: this.form.value.content,
+        },
+        this.form.value.image
+      );
     }
   }
 

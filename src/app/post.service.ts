@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class PostService {
-  private api = 'http://localhost:3000';
+  private api = 'http://localhost:3000/api';
   private posts: Post[] = [];
   postUpdated = new Subject<Post[]>();
 
@@ -14,7 +14,7 @@ export class PostService {
 
   getPost() {
     this.http
-      .get<{ message: string; posts: Post[] }>(`${this.api}/posts`)
+      .get<{ message: string; posts: Post[] }>(`${this.api}/post`)
       .pipe(
         map((postData) =>
           postData.posts.map((post) => {
@@ -41,9 +41,14 @@ export class PostService {
     return this.postUpdated.asObservable();
   }
 
-  addPost(post: Post) {
+  addPost(post: Post, file: File) {
+    const form = new FormData();
+    form.append('title', post.title!);
+    form.append('content', post.content!);
+    form.append('image', file, post.title);
+
     this.http
-      .post<{ message: string; post: Post }>(`${this.api}/create-post`, post)
+      .post<{ message: string; post: Post }>(`${this.api}/post`, form)
       .subscribe((res) => {
         this.posts.push(res.post);
         this.postUpdated.next([...this.posts]);
@@ -73,6 +78,7 @@ export class PostService {
       .delete<{ message: string; id: Post['id'] }>(`${this.api}/post/${postId}`)
       .subscribe((res) => {
         const updatedPosts = this.posts.filter((item) => item.id !== res.id);
+        this.posts = updatedPosts;
         this.postUpdated.next([...updatedPosts]);
       });
   }

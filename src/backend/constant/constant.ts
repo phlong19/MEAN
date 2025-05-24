@@ -9,3 +9,5 @@ export const Models = {
     collection: 'post',
   },
 };
+
+export const MimeTypeMaps: string[] = ['jpeg', 'jpg', 'png'];

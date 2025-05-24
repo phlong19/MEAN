@@ -1,25 +1,40 @@
 import express from 'express';
 import Post from '../models/post';
 import multer from 'multer';
+import { MimeTypeMaps } from '../constant/constant';
 const router = express.Router();
 
-router.post(
-  '/create-post',
-  multer().single('image'),
-  async (req, res, next) => {
-    // validate req.body
-    const post = new Post({
-      title: req.body.title,
-      content: req.body.content,
-    });
-    const createdPost = await post.save();
+const storage = multer.diskStorage({
+  destination(_, file, callback) {
+    const isValid = MimeTypeMaps.includes(file.mimetype.split('/')?.[1]);
+    let error: Error | null = new Error('Invalid MIME type');
 
-    res.status(201).json({
-      message: 'Post created successfully',
-      post: createdPost,
-    });
-  }
-);
+    if (isValid) {
+      error = null;
+    }
+    callback(error, 'src/backend/images/');
+  },
+  filename(_, file, callback) {
+    const name = file.originalname.toLowerCase().split(' ').join('-');
+    const ext = file.mimetype.split('/')?.[1];
+    callback(null, `${name}-${Date.now()}.${ext}`);
+  },
+});
+
+router.post('', multer({ storage }).single('image'), async (req, res, next) => {
+  console.log(req, res);
+  // validate req.body
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content,
+  });
+  const createdPost = await post.save();
+
+  res.status(201).json({
+    message: 'Post created successfully',
+    post: createdPost,
+  });
+});
 
 router.get('', async (req, res, next) => {
   const posts = await Post.find();

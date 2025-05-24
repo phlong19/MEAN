@@ -1,7 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-import multer from 'multer';
 
 import postRoute from './routes/post';
 
@@ -29,6 +28,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/posts', postRoute);
+app.use('/api/post', postRoute);
 
 export default app;
