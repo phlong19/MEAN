@@ -1,19 +1,14 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import mongoose from 'mongoose';
-
 import postRoute from './routes/post';
+import path from 'path';
 
 process.loadEnvFile();
 const app = express();
 
-mongoose
-  .connect(process.env?.['URI'] ?? '')
-  .then(() => console.log('Connected to DB'))
-  .catch((e) => console.error(e));
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use('/images', express.static(path.join('src/backend/images')));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

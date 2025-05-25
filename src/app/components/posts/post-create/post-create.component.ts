@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -28,12 +28,12 @@ import { mimeType } from './mime-type.validator';
   templateUrl: './post-create.component.html',
   styleUrl: './post-create.component.scss',
 })
-export class PostCreateComponent implements OnInit, OnDestroy {
+export class PostCreateComponent implements OnInit {
   post: Post;
   mode: 'create' | 'edit' = 'create';
   isLoading = false;
   form: FormGroup;
-  link: string;
+  link?: string;
   showUploadError = false;
   private postId: string;
 
@@ -47,7 +47,16 @@ export class PostCreateComponent implements OnInit, OnDestroy {
     // init the form
     this.form = new FormGroup({
       title: new FormControl(null, {
-        validators: [Validators.required, Validators.minLength(4)],
+        validators: [
+          Validators.required,
+          Validators.minLength(4),
+          (e) => {
+            if (e.value?.trim() === '') {
+              return { error: 'Invalid title' };
+            }
+            return null;
+          },
+        ],
       }),
       content: new FormControl(null, {
         validators: [Validators.required],
@@ -65,13 +74,16 @@ export class PostCreateComponent implements OnInit, OnDestroy {
         this.mode = 'edit';
         this.postId = paramMap.get('id')!;
         this.postService.getPostById(this.postId).subscribe((res) => {
-          this.post = { ...res.post!, id: res.post?._id };
-          this.isLoading = false;
-          this.form.setValue({
-            image: null,
-            title: this.post.title,
-            content: this.post.content,
-          });
+          if (res.post) {
+            this.post = { ...res.post!, id: res.post._id! };
+            this.isLoading = false;
+            this.link = this.post.image;
+            this.form.setValue({
+              image: this.post.image,
+              title: this.post.title,
+              content: this.post.content,
+            });
+          }
         });
       } else {
         this.mode = 'create';
@@ -89,10 +101,6 @@ export class PostCreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    return URL.revokeObjectURL(this.link);
-  }
-
   onAddPost() {
     if (this.form.invalid) {
       if (!this.form.value.image) {
@@ -103,7 +111,11 @@ export class PostCreateComponent implements OnInit, OnDestroy {
     }
     this.isLoading = true;
     if (this.postId) {
-      this.postService.updatePost(this.postId, { ...this.form.value });
+      this.postService.updatePost(
+        this.postId,
+        { ...this.form.value },
+        this.form.value.image
+      );
     } else {
       this.postService.addPost(
         {

@@ -9,6 +9,19 @@
       <mat-panel-title> {{ post.title }} </mat-panel-title>
     </mat-expansion-panel-header>
     <p>{{ post.content }}</p>
+    <mat-card *ngIf="post.image" class="image-preview" appearance="outlined">
+      <img
+        mat-card-image
+        class="main-image"
+        [src]="post.image"
+        alt="preview uploaded image"
+      />
+      <img
+        class="preview-layer"
+        [src]="post.image"
+        alt="{{ post.title ?? 'post\'s image' }}"
+      />
+    </mat-card>
 
     <mat-action-row>
       <a

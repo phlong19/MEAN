@@ -1,9 +1,16 @@
 import http from 'http';
 import app from './app';
+import mongoose from 'mongoose';
 
 const port: number = Number(process.env['PORT']) || 3000;
 
 const server = http.createServer(app);
+
+mongoose
+  .connect(process.env?.['URI'] ?? '')
+  .then(() => console.log('Connected to DB'))
+  .catch((e) => console.error(e));
+
 const address = server.address();
 
 const onError = (error: any) => {

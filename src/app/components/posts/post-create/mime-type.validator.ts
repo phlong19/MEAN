@@ -11,10 +11,14 @@ for (let i = 0; i < 4; i++) {
 export const mimeType = (
   control: AbstractControl
 ): Promise<Object> | Observable<Object> => {
-  const file = control.value as File;
+  const file = control.value;
   const fileReader = new FileReader();
 
   const fileReaderObs = new Observable((observer: Observer<Object>) => {
+    if (typeof file === 'string') {
+      return observer.next(null);
+    }
+
     fileReader.addEventListener('loadend', () => {
       // validation
       const arr = new Uint8Array(fileReader.result as ArrayBuffer).subarray(

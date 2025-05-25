@@ -36,11 +36,7 @@
         Upload media <span class="asterisk">*</span>
       </button>
       <input type="file" hidden #filePicker (change)="onFileChange($event)" />
-      <mat-card
-        *ngIf="link && form.get('image')?.valid"
-        class="image-preview"
-        appearance="outlined"
-      >
+      <mat-card *ngIf="link" class="image-preview" appearance="outlined">
         <img
           mat-card-image
           class="main-image"

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Post } from './app.model';
 import { map, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class PostService {
@@ -10,7 +9,7 @@ export class PostService {
   private posts: Post[] = [];
   postUpdated = new Subject<Post[]>();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
 
   getPost() {
     this.http
@@ -55,11 +54,16 @@ export class PostService {
       });
   }
 
-  updatePost(postId: Post['id'], post: Post) {
+  updatePost(postId: Post['id'], post: Post, file: File) {
+    const form = new FormData();
+    form.append('title', post.title!);
+    form.append('content', post.content!);
+    form.append('file', file);
+
     this.http
       .patch<{ message: string; post: Post }>(
         `${this.api}/post/${postId}`,
-        post
+        form
       )
       .subscribe((res) => {
         const updatedPosts = [...this.posts];

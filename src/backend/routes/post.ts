@@ -1,7 +1,9 @@
+import { existsSync, read, unlinkSync } from 'fs';
 import express from 'express';
 import Post from '../models/post';
 import multer from 'multer';
 import { MimeTypeMaps } from '../constant/constant';
+import mongoose from 'mongoose';
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -22,17 +24,26 @@ const storage = multer.diskStorage({
 });
 
 router.post('', multer({ storage }).single('image'), async (req, res, next) => {
-  console.log(req, res);
-  // validate req.body
-  const post = new Post({
-    title: req.body.title,
-    content: req.body.content,
-  });
-  const createdPost = await post.save();
+  if (req.body && req.file) {
+    const url = req.protocol + '://' + req.get('host');
 
-  res.status(201).json({
-    message: 'Post created successfully',
-    post: createdPost,
+    const post = new Post({
+      title: req.body.title,
+      content: req.body.content,
+      image: url + '/images/' + req.file.filename,
+    });
+
+    const createdPost = await post.save();
+
+    res.status(201).json({
+      message: 'Post created successfully',
+      post: createdPost,
+    });
+    next();
+  }
+
+  res.status(400).json({
+    message: 'Invalid request',
   });
 });
 
@@ -65,21 +76,57 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.patch('/:id', async (req, res, next) => {
-  const { id } = req.params;
+router.patch(
+  '/:id',
+  multer({ storage }).single('image'),
+  async (req, res, next) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-  const updatedPost = new Post({ ...req.body, _id: id });
+    try {
+      const { id } = req.params;
+      const { title, content } = req.body;
+      const newFile =
+        req.protocol +
+        '://' +
+        req.get('host') +
+        '/images/' +
+        req.file?.filename;
 
-  const post = await Post.updateOne({ _id: id }, updatedPost, {
-    returnDocument: 'after',
-  });
+      const post = await Post.findById(id).session(session);
 
-  res.status(201).json({
-    code: 201,
-    message: 'Updated post successfully!',
-    post,
-  });
-});
+      if (!post) {
+        throw new Error('No post found!');
+      }
+
+      // delete old file if new file & old file exist
+      if (newFile && existsSync(post.image!)) {
+        unlinkSync(post.image!);
+      }
+
+      // update here
+      post.title = title;
+      post.content = content;
+      post.image = newFile;
+
+      await post.save({ session });
+      await session.commitTransaction();
+      session.endSession();
+
+      res.status(201).json({
+        code: 201,
+        message: 'Updated post successfully!',
+        post,
+      });
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      res.status(500).json({
+        message: 'Error while updating post',
+      });
+    }
+  }
+);
 
 router.delete('/:id', async (req, res, next) => {
   // check if post exist, get name pop in the message if yes, throw an error if can't find any
