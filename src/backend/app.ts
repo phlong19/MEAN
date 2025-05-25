@@ -2,13 +2,14 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import postRoute from './routes/post';
 import path from 'path';
+import { ImageStaticPath } from './constant/constant';
 
 process.loadEnvFile();
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use('/images', express.static(path.join('src/backend/images')));
+app.use('/images', express.static(path.join(ImageStaticPath)));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

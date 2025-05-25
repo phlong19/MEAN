@@ -11,3 +11,4 @@ export const Models = {
 };
 
 export const MimeTypeMaps: string[] = ['jpeg', 'jpg', 'png'];
+export const ImageStaticPath = 'src/backend/images';

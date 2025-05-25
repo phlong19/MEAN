@@ -3,47 +3,56 @@
   <mat-spinner diameter="60"></mat-spinner>
 </div>
 <div class="no-posts" *ngIf="!posts.length && !isLoading">No posts found.</div>
-<mat-accordion *ngIf="posts.length">
-  <mat-expansion-panel *ngFor="let post of posts">
-    <mat-expansion-panel-header>
-      <mat-panel-title> {{ post.title }} </mat-panel-title>
-    </mat-expansion-panel-header>
-    <p>{{ post.content }}</p>
-    <mat-card *ngIf="post.image" class="image-preview" appearance="outlined">
-      <img
-        mat-card-image
-        class="main-image"
-        [src]="post.image"
-        alt="preview uploaded image"
-      />
-      <img
-        class="preview-layer"
-        [src]="post.image"
-        alt="{{ post.title ?? 'post\'s image' }}"
-      />
-    </mat-card>
+<div *ngIf="posts.length && !isLoading">
+  <mat-accordion>
+    <mat-expansion-panel *ngFor="let post of posts">
+      <mat-expansion-panel-header>
+        <mat-panel-title> {{ post.title }} </mat-panel-title>
+      </mat-expansion-panel-header>
+      <p>{{ post.content }}</p>
+      <mat-card *ngIf="post.image" class="image-preview" appearance="outlined">
+        <img
+          mat-card-image
+          class="main-image"
+          [src]="post.image"
+          alt="preview uploaded image"
+        />
+        <img
+          class="preview-layer"
+          [src]="post.image"
+          alt="{{ post.title ?? 'post\'s image' }}"
+        />
+      </mat-card>
 
-    <mat-action-row>
-      <a
-        [routerLink]="['/edit/', post.id]"
-        type="button"
-        extended
-        mat-button
-        color="primary"
-      >
-        <mat-icon>edit_note</mat-icon>
-        Edit
-      </a>
-      <button
-        (click)="onDelete(post.id)"
-        type="button"
-        mat-button
-        extended
-        color="warn"
-      >
-        <mat-icon>delete</mat-icon>
-        Delete
-      </button>
-    </mat-action-row>
-  </mat-expansion-panel>
-</mat-accordion>
+      <mat-action-row>
+        <a
+          [routerLink]="['/edit/', post.id]"
+          type="button"
+          extended
+          mat-button
+          color="primary"
+        >
+          <mat-icon>edit_note</mat-icon>
+          Edit
+        </a>
+        <button
+          (click)="onDelete(post.id)"
+          type="button"
+          mat-button
+          extended
+          color="warn"
+        >
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </mat-action-row>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <mat-paginator
+    [pageIndex]="currentPage - 1"
+    [length]="total"
+    [pageSize]="postPerPage"
+    [pageSizeOptions]="pageSizeOptions"
+    (page)="onChangePage($event)"
+  ></mat-paginator>
+</div>

@@ -2,31 +2,39 @@ import { Injectable } from '@angular/core';
 import { Post } from './app.model';
 import { map, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class PostService {
-  private api = 'http://localhost:3000/api';
+  private api = 'http://localhost:10000/api';
   private posts: Post[] = [];
-  postUpdated = new Subject<Post[]>();
+  postUpdated = new Subject<{ posts: Post[]; count: number }>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
-  getPost() {
+  getPost(postPerPage?: number, page?: number) {
+    const itemPerPage = postPerPage ? `?itemPerPage=${postPerPage}` : '';
+    const pageIndex = page ? `&page=${page}` : '';
     this.http
-      .get<{ message: string; posts: Post[] }>(`${this.api}/post`)
+      .get<{ message: string; posts: Post[]; count: number }>(
+        `${this.api}/post${itemPerPage}${pageIndex}`
+      )
       .pipe(
-        map((postData) =>
-          postData.posts.map((post) => {
-            const transformedPost = { ...post, id: post._id };
-            delete transformedPost._id;
+        map((postData) => {
+          return {
+            ...postData,
+            posts: postData.posts.map((post) => {
+              const transformedPost = { ...post, id: post._id };
+              delete transformedPost._id;
 
-            return transformedPost;
-          })
-        )
+              return transformedPost;
+            }),
+          };
+        })
       )
       .subscribe((res) => {
-        this.posts = res;
-        this.postUpdated.next([...this.posts]);
+        this.posts = res.posts;
+        this.postUpdated.next({ posts: [...this.posts], count: res.count });
       });
   }
 
@@ -42,48 +50,42 @@ export class PostService {
 
   addPost(post: Post, file: File) {
     const form = new FormData();
-    form.append('title', post.title!);
-    form.append('content', post.content!);
+    form.append('title', post.title!.trim());
+    form.append('content', post.content!.trim());
     form.append('image', file, post.title);
 
     this.http
-      .post<{ message: string; post: Post }>(`${this.api}/post`, form)
-      .subscribe((res) => {
-        this.posts.push(res.post);
-        this.postUpdated.next([...this.posts]);
+      .post<{ message: string; post: Post; count: number }>(
+        `${this.api}/post`,
+        form
+      )
+      .subscribe(() => {
+        this.router.navigate(['/']);
       });
   }
 
-  updatePost(postId: Post['id'], post: Post, file: File) {
+  updatePost(postId: Post['id'], post: Post, file?: File | string) {
+    const title = post.title!.trim();
     const form = new FormData();
-    form.append('title', post.title!);
-    form.append('content', post.content!);
-    form.append('file', file);
+    form.append('title', title);
+    form.append('content', post.content!.trim());
+    if (typeof file === 'object') {
+      form.append('image', file, title);
+    }
 
     this.http
       .patch<{ message: string; post: Post }>(
         `${this.api}/post/${postId}`,
         form
       )
-      .subscribe((res) => {
-        const updatedPosts = [...this.posts];
-        const index = updatedPosts.findIndex((i) => i.id === postId);
-
-        if (index !== -1) {
-          updatedPosts[index] = { ...res.post };
-        }
-        this.posts = updatedPosts;
-        this.postUpdated.next([...this.posts]);
+      .subscribe(() => {
+        this.router.navigate(['/']);
       });
   }
 
   deletePost(postId: Post['id']) {
-    this.http
-      .delete<{ message: string; id: Post['id'] }>(`${this.api}/post/${postId}`)
-      .subscribe((res) => {
-        const updatedPosts = this.posts.filter((item) => item.id !== res.id);
-        this.posts = updatedPosts;
-        this.postUpdated.next([...updatedPosts]);
-      });
+    return this.http.delete<{ message: string; id: Post['id'] }>(
+      `${this.api}/post/${postId}`
+    );
   }
 }

@@ -2,7 +2,7 @@ import { existsSync, read, unlinkSync } from 'fs';
 import express from 'express';
 import Post from '../models/post';
 import multer from 'multer';
-import { MimeTypeMaps } from '../constant/constant';
+import { ImageStaticPath, MimeTypeMaps } from '../constant/constant';
 import mongoose from 'mongoose';
 const router = express.Router();
 
@@ -33,27 +33,40 @@ router.post('', multer({ storage }).single('image'), async (req, res, next) => {
       image: url + '/images/' + req.file.filename,
     });
 
+    const count = await Post.countDocuments();
     const createdPost = await post.save();
 
     res.status(201).json({
       message: 'Post created successfully',
       post: createdPost,
+      count,
     });
-    next();
+  } else {
+    res.status(400).json({
+      message: 'Invalid request',
+    });
   }
-
-  res.status(400).json({
-    message: 'Invalid request',
-  });
 });
 
 router.get('', async (req, res, next) => {
-  const posts = await Post.find();
+  const { itemPerPage, page } = req.query;
+  const pageSize = Number(itemPerPage);
+  const currentPage = Number(page);
+
+  const postsQuery = Post.find();
+
+  if (currentPage && pageSize) {
+    postsQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
+  }
+
+  const count = await Post.countDocuments();
+  const posts = await postsQuery;
 
   res.status(200).json({
     code: 200,
     message: 'Fetched posts successfully!',
     posts,
+    count,
   });
 
   next();
@@ -100,8 +113,11 @@ router.patch(
       }
 
       // delete old file if new file & old file exist
-      if (newFile && existsSync(post.image!)) {
-        unlinkSync(post.image!);
+      const oldPath = `${ImageStaticPath}/${
+        post.image?.split('/images/')?.[1]
+      }`;
+      if (newFile && existsSync(oldPath)) {
+        unlinkSync(oldPath);
       }
 
       // update here
@@ -133,6 +149,12 @@ router.delete('/:id', async (req, res, next) => {
   const post = await Post.findById(req.params.id);
 
   if (post) {
+    const oldPath = `${ImageStaticPath}/${post.image?.split('/images/')?.[1]}`;
+
+    if (post.image && existsSync(oldPath)) {
+      unlinkSync(oldPath);
+    }
+
     await Post.deleteOne({ _id: post.id }).then(() =>
       res.status(200).json({
         message: `Deleted post ${post.title} successfully`,
