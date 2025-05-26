@@ -1,0 +1,25 @@
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  inset: 0;
+
+  mat-card {
+    padding: 20px;
+
+    .mat-mdc-card-header {
+      padding: 16px;
+    }
+
+    .login-form {
+      display: flex;
+      gap: 12px;
+    }
+  }
+
+  .form-footer {
+    padding-inline: inherit;
+    text-align: right;
+  }
+}

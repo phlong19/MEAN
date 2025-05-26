@@ -1,0 +1,28 @@
+<div class="login-wrapper">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Login</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form id="loginForm" class="login-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="Email" type="email" required />
+          <mat-icon matSuffix>email</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput placeholder="Password" type="password" required />
+          <mat-icon matSuffix>lock</mat-icon>
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer class="form-footer">
+      <button mat-raised-button form="loginForm" color="primary" type="submit">
+        Login
+      </button>
+    </mat-card-footer>
+  </mat-card>
+</div>
