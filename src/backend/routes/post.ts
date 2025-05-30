@@ -1,4 +1,4 @@
-import { existsSync, read, unlinkSync } from 'fs';
+import { existsSync, unlinkSync } from 'fs';
 import express from 'express';
 import Post from '../models/post';
 import multer from 'multer';

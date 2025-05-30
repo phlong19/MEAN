@@ -1,5 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -11,9 +12,13 @@ import { MatStepperModule } from '@angular/material/stepper';
     MatButtonModule,
     MatInputModule,
     FormsModule,
-    ReactiveFormsModule,
+    CommonModule,
   ],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss',
 })
-export class SignupComponent {}
+export class SignupComponent {
+  onSignup(form: NgForm) {
+    console.log(form);
+  }
+}

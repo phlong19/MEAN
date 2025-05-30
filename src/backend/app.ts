@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import postRoute from './routes/post';
+import userRoute from './routes/user';
 import path from 'path';
 import { ImageStaticPath } from './constant/constant';
 
@@ -24,6 +25,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/api/user', userRoute);
 app.use('/api/post', postRoute);
 
 export default app;

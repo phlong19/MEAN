@@ -4,17 +4,42 @@
       <mat-card-title>Login</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <form id="loginForm" class="login-form">
+      <form
+        id="loginForm"
+        (submit)="onLogin(loginForm)"
+        #loginForm="ngForm"
+        class="login-form"
+      >
         <mat-form-field appearance="outline">
           <mat-label>Email</mat-label>
-          <input matInput placeholder="Email" type="email" required />
+          <input
+            matInput
+            placeholder="Email"
+            type="email"
+            required
+            #emailInput="ngModel"
+            ngModel
+          />
           <mat-icon matSuffix>email</mat-icon>
+          <mat-error *ngIf="emailInput.valid"
+            >Please enter a valid email.</mat-error
+          >
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Password</mat-label>
-          <input matInput placeholder="Password" type="password" required />
+          <input
+            matInput
+            placeholder="Password"
+            type="password"
+            required
+            #passwordInput="ngModel"
+            ngModel
+          />
           <mat-icon matSuffix>lock</mat-icon>
+          <mat-error *ngIf="passwordInput.valid"
+            >Please enter your password.</mat-error
+          >
         </mat-form-field>
       </form>
     </mat-card-content>
