@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
-import { PostService } from '../../../post.service';
+import { PostService } from '../../../services/post.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Post } from '../../../app.model';
 import { mimeType } from './mime-type.validator';
