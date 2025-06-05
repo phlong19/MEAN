@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import AuthService from '../../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,9 @@ import { MatInputModule } from '@angular/material/input';
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
+  constructor(public authService: AuthService) {}
+
   onLogin(form: NgForm) {
-    console.log(form);
+    this.authService.login(form.value.email, form.value.password);
   }
 }

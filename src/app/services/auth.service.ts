@@ -14,4 +14,12 @@ export default class AuthService {
       console.log(res);
     });
   }
+
+  login(email: string, password: string) {
+    this.http
+      .post(`${this.api}/user/login`, { email, password })
+      .subscribe((res) => {
+        console.log(res);
+      });
+  }
 }

@@ -1,7 +1,8 @@
 import { Schema, model } from 'mongoose';
 import { Models } from '../constant/constant';
+import { User as UserSchema } from '../../app/app.model';
 
-const userSchema = new Schema({
+const userSchema = new Schema<UserSchema>({
   username: {
     type: String,
     required: true,
