@@ -57,3 +57,47 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+# MEAN Stack Project
+
+This project is a simple implementation of the MEAN stack (MongoDB, Express, Angular, Node.js). It demonstrates the capabilities of each technology while creating a full-stack web application.
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Running the Project](#running-the-project)
+- [Folder Structure](#folder-structure)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Introduction
+
+The MEAN stack is a powerful set of technologies for building dynamic web applications. This project serves as a basic example of how to structure a full-stack app using MongoDB, Express, Angular, and Node.js.
+
+## Features
+
+- CRUD operations with a MongoDB database.
+- RESTful API built using Node.js and Express.
+- Frontend built with Angular.
+- Basic authentication (optional).
+- Responsive UI with Angular material design.
+
+## Technologies Used
+
+- **MongoDB**: NoSQL database for storing application data.
+- **Express.js**: Web framework for Node.js.
+- **Angular**: Frontend framework for building dynamic single-page applications.
+- **Node.js**: JavaScript runtime for building the backend of the application.
+
+## Installation
+
+### Prerequisites
+
+Before getting started, you’ll need to have the following installed on your local machine:
+
+- [Node.js](https://nodejs.org/) (including npm)
+- [MongoDB](https://www.mongodb.com/try/download/community)
+- [Angular CLI](https://angular.io/cli) (optiona
