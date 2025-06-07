@@ -1,52 +1,95 @@
-<mat-horizontal-stepper>
-  <!-- Step 1: Name -->
-  <mat-step label="Name">
-    <mat-form-field appearance="fill">
-      <mat-label>Name</mat-label>
-      <input matInput required type="text" placeholder="John Doe.." />
-    </mat-form-field>
-    <div>
-      <button mat-button matStepperNext>Next</button>
-    </div>
-  </mat-step>
+<form id="signupForm" #signupForm="ngForm" (submit)="onSignup(signupForm)">
+  <mat-horizontal-stepper>
+    <!-- Step 1: Name -->
+    <mat-step label="Name" #form>
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <input
+          name="username"
+          matInput
+          #nameInput="ngModel"
+          ngModel
+          required
+          type="text"
+          placeholder="John Doe.."
+        />
+      </mat-form-field>
+      <div>
+        <button
+          type="button"
+          [disabled]="nameInput.invalid"
+          mat-stroked-button
+          matStepperNext
+        >
+          Next
+        </button>
+      </div>
+    </mat-step>
 
-  <!-- Step 2: Email -->
-  <mat-step label="Email">
-    <mat-form-field appearance="fill">
-      <mat-label>Email</mat-label>
-      <input
-        matInput
-        type="email"
-        required
-        placeholder="your_pretty_email@domain.com"
-      />
-    </mat-form-field>
-    <div>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button matStepperNext>Next</button>
-    </div>
-  </mat-step>
+    <!-- Step 2: Email -->
+    <mat-step label="Email">
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input
+          name="email"
+          #emailInput="ngModel"
+          ngModel
+          matInput
+          type="email"
+          required
+          placeholder="your_pretty_email@domain.com"
+        />
+      </mat-form-field>
+      <div>
+        <button type="button" mat-button matStepperPrevious>Back</button>
+        <button
+          type="button"
+          [disabled]="emailInput.invalid"
+          mat-button
+          matStepperNext
+        >
+          Next
+        </button>
+      </div>
+    </mat-step>
 
-  <!-- Step 3: Passwords -->
-  <mat-step label="Password">
-    <mat-form-field appearance="fill">
-      <mat-label>Password</mat-label>
-      <input matInput type="password" required placeholder="Your password" />
-    </mat-form-field>
+    <!-- Step 3: Passwords -->
+    <mat-step label="Password">
+      <mat-form-field appearance="fill">
+        <mat-label>Password</mat-label>
+        <input
+          name="password"
+          matInput
+          type="password"
+          #passwordInput="ngModel"
+          ngModel
+          placeholder="Your password"
+        />
+      </mat-form-field>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Confirm Password</mat-label>
-      <input
-        matInput
-        type="password"
-        required
-        placeholder="Please re-enter your password"
-      />
-    </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Confirm Password</mat-label>
+        <input
+          name="confirmPassword"
+          #confirmPasswordInput="ngModel"
+          ngModel
+          matInput
+          type="password"
+          required
+          placeholder="Please re-enter your password"
+        />
+      </mat-form-field>
 
-    <div>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button>Submit</button>
-    </div>
-  </mat-step>
-</mat-horizontal-stepper>
+      <div>
+        <button type="button" mat-button matStepperPrevious>Back</button>
+        <button
+          type="submit"
+          [disabled]="confirmPasswordInput.invalid || passwordInput.invalid"
+          mat-button
+        >
+          Submit
+        </button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+</form>

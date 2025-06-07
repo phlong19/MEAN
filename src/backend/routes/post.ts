@@ -4,6 +4,7 @@ import Post from '../models/post';
 import multer from 'multer';
 import { ImageStaticPath, MimeTypeMaps } from '../constant/constant';
 import mongoose from 'mongoose';
+import checkAuth from '../middlewares/checkAuth';
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -23,32 +24,37 @@ const storage = multer.diskStorage({
   },
 });
 
-router.post('', multer({ storage }).single('image'), async (req, res, next) => {
-  if (req.body && req.file) {
-    const url = req.protocol + '://' + req.get('host');
+router.post(
+  '',
+  checkAuth,
+  multer({ storage }).single('image'),
+  async (req, res, next) => {
+    if (req.body && req.file) {
+      const url = req.protocol + '://' + req.get('host');
 
-    const post = new Post({
-      title: req.body.title,
-      content: req.body.content,
-      image: url + '/images/' + req.file.filename,
-    });
+      const post = new Post({
+        title: req.body.title,
+        content: req.body.content,
+        image: url + '/images/' + req.file.filename,
+      });
 
-    const count = await Post.countDocuments();
-    const createdPost = await post.save();
+      const count = await Post.countDocuments();
+      const createdPost = await post.save();
 
-    res.status(201).json({
-      message: 'Post created successfully',
-      post: createdPost,
-      count,
-    });
-  } else {
-    res.status(400).json({
-      message: 'Invalid request',
-    });
+      res.status(201).json({
+        message: 'Post created successfully',
+        post: createdPost,
+        count,
+      });
+    } else {
+      res.status(400).json({
+        message: 'Invalid request',
+      });
+    }
   }
-});
+);
 
-router.get('', async (req, res, next) => {
+router.get('', checkAuth, async (req, res, next) => {
   const { itemPerPage, page } = req.query;
   const pageSize = Number(itemPerPage);
   const currentPage = Number(page);
@@ -72,7 +78,7 @@ router.get('', async (req, res, next) => {
   next();
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', checkAuth, async (req, res, next) => {
   const { id } = req.params;
 
   const post = await Post.findById(id);
@@ -91,6 +97,7 @@ router.get('/:id', async (req, res, next) => {
 
 router.patch(
   '/:id',
+  checkAuth,
   multer({ storage }).single('image'),
   async (req, res, next) => {
     const session = await mongoose.startSession();
@@ -144,9 +151,9 @@ router.patch(
   }
 );
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', checkAuth, async (req, res, next) => {
   // check if post exist, get name pop in the message if yes, throw an error if can't find any
-  const post = await Post.findById(req.params.id);
+  const post = await Post.findById(req.params?.['id']);
 
   if (post) {
     const oldPath = `${ImageStaticPath}/${post.image?.split('/images/')?.[1]}`;

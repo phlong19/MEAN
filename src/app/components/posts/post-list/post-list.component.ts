@@ -10,6 +10,7 @@ import { RouterLink } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-post-list',
