@@ -11,6 +11,7 @@
 
   <span class="spacer"></span>
 
+  @if(!isAuthenticated) {
   <div class="action-wrapper">
     <a mat-flat-button routerLink="login">
       Login
@@ -19,4 +20,15 @@
 
     <a mat-button routerLink="signup"> Signup </a>
   </div>
+  } @else {
+  <div #logout class="authenticated">
+    <h5>
+      Hi,
+      <span class="username">
+        {{ user.username }}
+      </span>
+    </h5>
+    <button (click)="onLogout()" mat-flat-button type="button">Logout</button>
+  </div>
+  }
 </mat-toolbar>

@@ -54,7 +54,7 @@ router.post(
   }
 );
 
-router.get('', checkAuth, async (req, res, next) => {
+router.get('', async (req, res, next) => {
   const { itemPerPage, page } = req.query;
   const pageSize = Number(itemPerPage);
   const currentPage = Number(page);
