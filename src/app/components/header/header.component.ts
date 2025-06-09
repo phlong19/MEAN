@@ -36,14 +36,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.authListener = this.authService.getUserListener().subscribe((res) => {
-      console.log(res);
       this.isAuthenticated = !!res?._id;
       this.user = { ...res };
     });
   }
 
   onToggleDrawer() {
-    console.log(this.user);
     this.toggleDrawer.emit();
   }
 

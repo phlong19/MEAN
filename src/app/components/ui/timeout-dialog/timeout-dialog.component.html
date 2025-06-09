@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Hi {{ data.name }}</h2>
+<mat-dialog-content>
+  <p class="mat-typography">
+    Is this a farewell? It seems like your session has ended...
+  </p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button type="button" mat-raised-button (click)="toLoginPage()">
+    No, let me login again ~
+  </button>
+  <button
+    type="button"
+    color="primary"
+    mat-flat-button
+    mat-dialog-close
+    (click)="goHome()"
+    cdkFocusInitial
+  >
+    Yah, let's go home!
+  </button>
+</mat-dialog-actions>

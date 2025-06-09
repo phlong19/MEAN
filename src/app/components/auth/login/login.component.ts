@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import AuthService from '../../../services/auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { TimeoutDialogComponent } from '../../ui/timeout-dialog/timeout-dialog.component';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +23,7 @@ import AuthService from '../../../services/auth.service';
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
+  readonly dialog = inject(MatDialog);
   constructor(public authService: AuthService) {}
 
   onLogin(form: NgForm) {
