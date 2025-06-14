@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { verify, JwtPayload } from 'jsonwebtoken';
 
 export default function (req: Request, res: Response, next: NextFunction) {
   try {
     const token = req.headers.authorization?.split(' ')[1] ?? '';
-    jwt.verify(token, process.env['JWT_SECRET'] ?? '');
+    const decodedToken = verify(token, process.env['JWT_SECRET'] ?? '');
+    req.user = { ...(decodedToken as JwtPayload) };
     next();
   } catch (error) {
     res.status(401).json({ message: 'Authorization failed.' });

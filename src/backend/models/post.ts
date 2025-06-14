@@ -15,6 +15,10 @@ const postSchema = new Schema<PostSchema>({
     type: String,
     required: true,
   },
+  author: {
+    type: String,
+    required: true,
+  },
 });
 
 const Post = model(Models.Post.name, postSchema, Models.Post.collection);

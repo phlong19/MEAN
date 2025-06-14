@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Post } from '../../../app.model';
 import { PostService } from '../../../services/post.service';
@@ -11,6 +11,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import AuthService from '../../../services/auth.service';
+import { error } from 'console';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-post-list',
@@ -35,6 +37,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   currentPage: number = 1;
   pageSizeOptions = [1, 2, 5, 10];
   userAuthenticated = false;
+  private _snackbar = inject(MatSnackBar);
   private postSub: Subscription;
   private authSub: Subscription;
 
@@ -59,8 +62,14 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   onDelete(postId: Post['id']) {
     this.isLoading = true;
-    this.postService.deletePost(postId).subscribe(() => {
-      this.postService.getPost(this.postPerPage, this.currentPage);
+    this.postService.deletePost(postId).subscribe({
+      next: () => {
+        this.postService.getPost(this.postPerPage, this.currentPage);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this._snackbar.open(err?.error?.message, undefined, { duration: 5000 });
+      },
     });
   }
 

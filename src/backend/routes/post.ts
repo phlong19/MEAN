@@ -36,6 +36,7 @@ router.post(
         title: req.body.title,
         content: req.body.content,
         image: url + '/images/' + req.file.filename,
+        author: req.user?.userId,
       });
 
       const count = await Post.countDocuments();
@@ -113,10 +114,16 @@ router.patch(
         '/images/' +
         req.file?.filename;
 
-      const post = await Post.findById(id).session(session);
+      const post = await Post.findOne({
+        _id: id,
+        author: req.user?.userId,
+      }).session(session);
 
       if (!post) {
-        throw new Error('No post found!');
+        res.status(401).json({
+          message: "We couldn't find that post or you might not have access.",
+        });
+        return;
       }
 
       // delete old file if new file & old file exist
@@ -152,8 +159,10 @@ router.patch(
 );
 
 router.delete('/:id', checkAuth, async (req, res, next) => {
+  const { id } = req.params;
+
   // check if post exist, get name pop in the message if yes, throw an error if can't find any
-  const post = await Post.findById(req.params?.['id']);
+  const post = await Post.findOne({ _id: id, author: req.user?.userId });
 
   if (post) {
     const oldPath = `${ImageStaticPath}/${post.image?.split('/images/')?.[1]}`;
@@ -168,6 +177,10 @@ router.delete('/:id', checkAuth, async (req, res, next) => {
         id: post._id,
       })
     );
+  } else {
+    res.status(401).json({
+      message: "No post found or you don't have permission to do this action.",
+    });
   }
 });
 

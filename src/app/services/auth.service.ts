@@ -37,6 +37,29 @@ export default class AuthService {
     });
   }
 
+  autoAuthUser() {
+    const token = localStorage.getItem('token');
+    const expiration = localStorage.getItem('expiration');
+    const user = localStorage.getItem('user');
+
+    if (!expiration || !token || !user) {
+      return;
+    }
+
+    const expireAt = new Date(expiration);
+    const now = new Date();
+    const timeLeft = expireAt.getTime() - now.getTime();
+
+    if (timeLeft > 0) {
+      this.token = token;
+      this.isAuthenticated = true;
+      this.setSessionTimer(timeLeft);
+      this.user.next(JSON.parse(user));
+    } else {
+      this.logout();
+    }
+  }
+
   login(email: string, password: string) {
     this.http
       .post<{ expire: number; token: string; user: User }>(
@@ -50,13 +73,16 @@ export default class AuthService {
         this.token = res.token;
         if (res.token) {
           const name = res.user?.username;
-          this.tokenTimer = setTimeout(() => {
-            this.dialog.open(TimeoutDialogComponent, { data: { name } });
-            this.logout();
-          }, res.expire * 60 * 1000); // 5 mins
+          const expire = res.expire * 60 * 1000;
+          const expirationDate = new Date(new Date().getTime() + expire);
+
+          this.setSessionTimer(expire, name);
           this.isAuthenticated = true;
           this.user.next({ ...res.user });
           this.router.navigate(['/']);
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('expiration', expirationDate.toISOString());
+          localStorage.setItem('user', JSON.stringify(res.user));
         }
       });
   }
@@ -67,6 +93,17 @@ export default class AuthService {
     if (this.tokenTimer) {
       clearTimeout(this.tokenTimer);
     }
+    localStorage.removeItem('token');
+    localStorage.removeItem('expiration');
+    localStorage.removeItem('user');
+
     this.user.next({});
+  }
+
+  private setSessionTimer(duration: number, name?: string) {
+    this.tokenTimer = setTimeout(() => {
+      this.dialog.open(TimeoutDialogComponent, { data: name });
+      this.logout();
+    }, duration);
   }
 }

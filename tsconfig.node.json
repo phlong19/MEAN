@@ -9,6 +9,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
+  "files": ["src/types.d.ts"],
   "include": ["src/backend/**/*.ts"],
   "exclude": [
     "node_modules",
