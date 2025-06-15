@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Post } from '../app.model';
+import { ExtendedPost, Post } from '../app.model';
 import { map, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -7,24 +7,33 @@ import { Router } from '@angular/router';
 @Injectable({ providedIn: 'root' })
 export class PostService {
   private api = 'http://localhost:10000/api';
-  private posts: Post[] = [];
-  postUpdated = new Subject<{ posts: Post[]; count: number }>();
+  private posts: ExtendedPost[] = [];
+  postUpdated = new Subject<{
+    posts: ExtendedPost[];
+    count: number;
+  }>();
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  getPost(postPerPage?: number, page?: number) {
+  getPost(postPerPage?: number, page?: number, userId?: string) {
     const itemPerPage = postPerPage ? `?itemPerPage=${postPerPage}` : '';
     const pageIndex = page ? `&page=${page}` : '';
     this.http
-      .get<{ message: string; posts: Post[]; count: number }>(
-        `${this.api}/post${itemPerPage}${pageIndex}`
-      )
+      .get<{
+        message: string;
+        posts: Post[];
+        count: number;
+      }>(`${this.api}/post${itemPerPage}${pageIndex}`)
       .pipe(
         map((postData) => {
           return {
             ...postData,
             posts: postData.posts.map((post) => {
-              const transformedPost = { ...post, id: post._id };
+              const transformedPost = {
+                ...post,
+                id: post._id,
+                isAuthor: !!userId && userId === post.author,
+              };
               delete transformedPost._id;
 
               return transformedPost;

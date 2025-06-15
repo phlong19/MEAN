@@ -7,6 +7,7 @@ export interface Post {
   author?: string;
 }
 
+export type ExtendedPost = Post & { isAuthor: boolean };
 export interface CustomRoute {
   href: string;
   label: string;

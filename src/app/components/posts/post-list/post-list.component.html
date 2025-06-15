@@ -24,7 +24,7 @@
         />
       </mat-card>
 
-      <mat-action-row *ngIf="userAuthenticated">
+      <mat-action-row *ngIf="post.isAuthor">
         <a
           [routerLink]="['/edit/', post.id]"
           type="button"

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { Post } from '../../../app.model';
+import { ExtendedPost, Post } from '../../../app.model';
 import { PostService } from '../../../services/post.service';
 import { Subscription } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,13 +30,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './post-list.component.scss',
 })
 export class PostListComponent implements OnInit, OnDestroy {
-  posts: Post[] = [];
+  posts: ExtendedPost[] = [];
   isLoading = false;
   total: number = 0;
   postPerPage: number = 2;
   currentPage: number = 1;
   pageSizeOptions = [1, 2, 5, 10];
-  userAuthenticated = false;
+  private userId: string;
   private _snackbar = inject(MatSnackBar);
   private postSub: Subscription;
   private authSub: Subscription;
@@ -48,15 +48,16 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.postService.getPost(this.postPerPage, this.currentPage);
+    this.userId = this.authService.getUserId();
+    this.authSub = this.authService.getUserListener().subscribe((res) => {
+      this.userId = res._id!;
+    });
+    this.postService.getPost(this.postPerPage, this.currentPage, this.userId);
     this.postSub = this.postService.getPostUpdateListener().subscribe((res) => {
       this.posts = res.posts;
+      console.log(this.posts);
       this.total = res.count;
       this.isLoading = false;
-    });
-    this.userAuthenticated = this.authService.getIsAuthenticated();
-    this.authSub = this.authService.getUserListener().subscribe((res) => {
-      this.userAuthenticated = !!res._id;
     });
   }
 
@@ -64,7 +65,11 @@ export class PostListComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.postService.deletePost(postId).subscribe({
       next: () => {
-        this.postService.getPost(this.postPerPage, this.currentPage);
+        this.postService.getPost(
+          this.postPerPage,
+          this.currentPage,
+          this.userId
+        );
       },
       error: (err) => {
         this.isLoading = false;
@@ -78,7 +83,7 @@ export class PostListComponent implements OnInit, OnDestroy {
     const { pageIndex, pageSize } = e;
     this.postPerPage = pageSize;
     this.currentPage = pageIndex + 1;
-    this.postService.getPost(this.postPerPage, this.currentPage);
+    this.postService.getPost(this.postPerPage, this.currentPage, this.userId);
   }
 
   ngOnDestroy(): void {

@@ -13,6 +13,7 @@ export default class AuthService {
   private isAuthenticated = false;
   private tokenTimer: NodeJS.Timeout;
   private user = new Subject<User>();
+  private userId: string;
   readonly dialog = inject(MatDialog);
 
   constructor(private http: HttpClient, private router: Router) {}
@@ -23,6 +24,10 @@ export default class AuthService {
 
   getIsAuthenticated() {
     return this.isAuthenticated;
+  }
+
+  getUserId() {
+    return this.userId;
   }
 
   getUserListener() {
@@ -54,7 +59,9 @@ export default class AuthService {
       this.token = token;
       this.isAuthenticated = true;
       this.setSessionTimer(timeLeft);
-      this.user.next(JSON.parse(user));
+      const parsedUser = JSON.parse(user);
+      this.user.next(parsedUser);
+      this.userId = parsedUser?._id;
     } else {
       this.logout();
     }
@@ -79,6 +86,7 @@ export default class AuthService {
           this.setSessionTimer(expire, name);
           this.isAuthenticated = true;
           this.user.next({ ...res.user });
+          this.userId = res.user._id!;
           this.router.navigate(['/']);
           localStorage.setItem('token', res.token);
           localStorage.setItem('expiration', expirationDate.toISOString());
