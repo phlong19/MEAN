@@ -55,27 +55,30 @@ export class PostListComponent implements OnInit, OnDestroy {
     this.postService.getPost(this.postPerPage, this.currentPage, this.userId);
     this.postSub = this.postService.getPostUpdateListener().subscribe((res) => {
       this.posts = res.posts;
-      console.log(this.posts);
       this.total = res.count;
       this.isLoading = false;
     });
   }
 
   onDelete(postId: Post['id']) {
+    let message = '';
     this.isLoading = true;
     this.postService.deletePost(postId).subscribe({
-      next: () => {
+      next: (res) => {
         this.postService.getPost(
           this.postPerPage,
           this.currentPage,
           this.userId
         );
+        message = res.message;
       },
       error: (err) => {
         this.isLoading = false;
-        this._snackbar.open(err?.error?.message, undefined, { duration: 5000 });
+        message = err?.error?.message;
       },
     });
+
+    this._snackbar.open(message, undefined, { duration: 5000 });
   }
 
   onChangePage(e: PageEvent) {

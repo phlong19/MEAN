@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -14,6 +14,7 @@ import { PostService } from '../../../services/post.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Post } from '../../../app.model';
 import { mimeType } from './mime-type.validator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-post-create',
@@ -36,6 +37,7 @@ export class PostCreateComponent implements OnInit {
   link?: string;
   showUploadError = false;
   private postId: string;
+  private _snackbar = inject(MatSnackBar);
 
   constructor(
     public postService: PostService,
@@ -117,13 +119,18 @@ export class PostCreateComponent implements OnInit {
         this.form.value.image
       );
     } else {
-      this.postService.addPost(
-        {
-          title: this.form.value.title,
-          content: this.form.value.content,
-        },
-        this.form.value.image
-      );
+      this.postService
+        .addPost(
+          {
+            title: this.form.value.title,
+            content: this.form.value.content,
+          },
+          this.form.value.image
+        )
+        .subscribe((res) => {
+          this._snackbar.open(res.message, undefined, { duration: 5000 });
+          this.router.navigate(['/']);
+        });
     }
   }
 

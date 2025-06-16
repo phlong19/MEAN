@@ -63,14 +63,10 @@ export class PostService {
     form.append('content', post.content!.trim());
     form.append('image', file, post.title);
 
-    this.http
-      .post<{ message: string; post: Post; count: number }>(
-        `${this.api}/post`,
-        form
-      )
-      .subscribe(() => {
-        this.router.navigate(['/']);
-      });
+    return this.http.post<{ message: string; post: Post; count: number }>(
+      `${this.api}/post`,
+      form
+    );
   }
 
   updatePost(postId: Post['id'], post: Post, file?: File | string) {

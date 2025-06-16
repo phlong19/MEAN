@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { map, Subject } from 'rxjs';
 import { User } from '../app.model';
 import { MatDialog } from '@angular/material/dialog';
 import { TimeoutDialogComponent } from '../components/ui/timeout-dialog/timeout-dialog.component';
@@ -37,9 +37,7 @@ export default class AuthService {
   createUser(username: string, email: string, password: string) {
     const user = { username, email, password };
 
-    this.http.post(`${this.api}/user/signup`, user).subscribe((res) => {
-      this.router.navigate(['/login']);
-    });
+    return this.http.post<{ message: string }>(`${this.api}/user/signup`, user);
   }
 
   autoAuthUser() {
@@ -68,31 +66,30 @@ export default class AuthService {
   }
 
   login(email: string, password: string) {
-    this.http
-      .post<{ expire: number; token: string; user: User }>(
+    return this.http
+      .post<{ expire: number; token: string; user: User; message: string }>(
         `${this.api}/user/login`,
-        {
-          email,
-          password,
-        }
+        { email, password }
       )
-      .subscribe((res) => {
-        this.token = res.token;
-        if (res.token) {
-          const name = res.user?.username;
-          const expire = res.expire * 60 * 1000;
-          const expirationDate = new Date(new Date().getTime() + expire);
+      .pipe(
+        map((res) => {
+          if (res.token) {
+            const expire = res.expire * 60 * 1000;
+            const expirationDate = new Date(new Date().getTime() + expire);
 
-          this.setSessionTimer(expire, name);
-          this.isAuthenticated = true;
-          this.user.next({ ...res.user });
-          this.userId = res.user._id!;
-          this.router.navigate(['/']);
-          localStorage.setItem('token', res.token);
-          localStorage.setItem('expiration', expirationDate.toISOString());
-          localStorage.setItem('user', JSON.stringify(res.user));
-        }
-      });
+            this.setSessionTimer(expire, res.user.username);
+            this.isAuthenticated = true;
+            this.user.next({ ...res.user });
+            this.userId = res.user._id!;
+            localStorage.setItem('token', res.token);
+            localStorage.setItem('expiration', expirationDate.toISOString());
+            localStorage.setItem('user', JSON.stringify(res.user));
+
+            this.router.navigate(['/']);
+          }
+          return res.message;
+        })
+      );
   }
 
   logout() {

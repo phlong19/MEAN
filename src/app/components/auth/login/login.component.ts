@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import AuthService from '../../../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
-import { TimeoutDialogComponent } from '../../ui/timeout-dialog/timeout-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -23,10 +23,15 @@ import { TimeoutDialogComponent } from '../../ui/timeout-dialog/timeout-dialog.c
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
+  private _snackbar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
   constructor(public authService: AuthService) {}
 
   onLogin(form: NgForm) {
-    this.authService.login(form.value.email, form.value.password);
+    this.authService
+      .login(form.value.email, form.value.password)
+      .subscribe((message) =>
+        this._snackbar.open(message, undefined, { duration: 5000 })
+      );
   }
 }
